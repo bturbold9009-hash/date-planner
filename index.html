@@ -239,6 +239,19 @@
       <input type="hidden" name="from_name" value="Date Planner" />
       <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
 
+
+      <fieldset>
+        <legend>
+          <span class="step">Before we start</span>
+          Tell me who you are
+        </legend>
+        <div class="options">
+          <label class="small">Your name</label>
+          <input type="text" name="Your name" id="yourName" required style="width:100%;min-height:50px;border:1.5px solid var(--border);border-radius:13px;padding:10px 12px;font:inherit;background:white;margin-bottom:12px;">
+          <label class="small">Invite code</label>
+          <input type="text" name="Invite code" id="inviteCode" required style="width:100%;min-height:50px;border:1.5px solid var(--border);border-radius:13px;padding:10px 12px;font:inherit;background:white;">
+        </div>
+      </fieldset>
       <fieldset>
         <legend>
           <span class="step">Question 1</span>
@@ -363,7 +376,7 @@
     }
     prevMonthBtn.onclick=()=>{if(!prevMonthBtn.disabled){currentMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth()-1,1);renderCalendar()}};
     nextMonthBtn.onclick=()=>{if(!nextMonthBtn.disabled){currentMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth()+1,1);renderCalendar()}};renderCalendar();
-    form.addEventListener("submit",async e=>{e.preventDefault();if(!selectedDate){result.className="error";result.textContent="Please select a date.";return}const key=form.querySelector('input[name="access_key"]').value;if(!key||key==="YOUR_ACCESS_KEY_HERE"){result.className="error";result.textContent="Web3Forms access key has not been added yet.";return}submitBtn.disabled=true;submitBtn.textContent="Sending...";result.className="";result.style.display="none";try{const fd=new FormData(form),r=await fetch("https://api.web3forms.com/submit",{method:"POST",body:fd}),data=await r.json();if(!data.success)throw new Error(data.message||"Submission failed");form.reset();selectedDate=null;preferredDateInput.value="";selectedDateText.textContent="Select a date ❤️";currentMonth=new Date(2026,7,1);renderCalendar();result.className="success";result.textContent="Your choices were sent successfully ❤️"}catch(err){result.className="error";result.textContent="Something went wrong. Please try again."}finally{submitBtn.disabled=false;submitBtn.textContent="❤️ Send My Choices"}});
+    form.addEventListener("submit",async e=>{e.preventDefault();const validCodes=["Luna11","Drow22","Mage33","Mirana44"];const code=document.getElementById("inviteCode").value.trim();if(!validCodes.includes(code)){result.className="error";result.style.display="block";result.textContent="Invalid invite code.";return}if(!selectedDate){result.className="error";result.textContent="Please select a date.";return}const key=form.querySelector('input[name="access_key"]').value;if(!key||key==="YOUR_ACCESS_KEY_HERE"){result.className="error";result.textContent="Web3Forms access key has not been added yet.";return}submitBtn.disabled=true;submitBtn.textContent="Sending...";result.className="";result.style.display="none";try{const fd=new FormData(form),r=await fetch("https://api.web3forms.com/submit",{method:"POST",body:fd}),data=await r.json();if(!data.success)throw new Error(data.message||"Submission failed");form.reset();selectedDate=null;preferredDateInput.value="";selectedDateText.textContent="Select a date ❤️";currentMonth=new Date(2026,7,1);renderCalendar();result.className="success";result.textContent="Your choices were sent successfully ❤️"}catch(err){result.className="error";result.textContent="Something went wrong. Please try again."}finally{submitBtn.disabled=false;submitBtn.textContent="❤️ Send My Choices"}});
   </script>
 </body>
 </html>
