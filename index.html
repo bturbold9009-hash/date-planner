@@ -167,6 +167,25 @@
       background: white;
     }
 
+    .custom-box {
+      margin-top: 10px;
+      padding: 14px;
+      border: 1.5px dashed #e8b8c2;
+      border-radius: 16px;
+      background: #fffafb;
+    }
+
+    .custom-input {
+      width: 100%;
+      min-height: 50px;
+      border: 1.5px solid var(--border);
+      border-radius: 13px;
+      padding: 10px 12px;
+      font: inherit;
+      color: var(--text);
+      background: white;
+    }
+
     button {
       width: 100%;
       min-height: 56px;
@@ -216,6 +235,50 @@
     .day:hover:not(:disabled){background:#fff0f3}.day.selected{background:var(--accent);color:#fff;box-shadow:0 8px 16px rgba(232,93,117,.22)}
     .day:disabled{color:#cdbfc2;cursor:not-allowed}.day.empty{visibility:hidden}
     .selected-date{margin-top:14px;padding:12px 14px;border-radius:14px;background:#fff0f3;color:#8a3347;font-weight:750;text-align:center}
+
+    .success-screen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      padding: 20px;
+      background: rgba(36, 27, 29, .48);
+      backdrop-filter: blur(7px);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .success-screen.show { display: flex; }
+
+    .success-card {
+      width: min(100%, 420px);
+      padding: 30px 24px;
+      border-radius: 26px;
+      background: white;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .success-icon {
+      font-size: 52px;
+      margin-bottom: 12px;
+    }
+
+    .success-card h2 {
+      margin: 0 0 10px;
+      font-size: 27px;
+    }
+
+    .success-card p {
+      margin: 0 0 22px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .success-card button {
+      min-height: 50px;
+      font-size: 16px;
+    }
 
     @media (min-width: 560px) {
       body { padding-top: 40px; }
@@ -281,6 +344,11 @@
           <label class="choice"><input type="radio" name="Preferred time" value="20:00" /><span>🕗 20:00</span></label>
           <label class="choice"><input type="radio" name="Preferred time" value="21:00" /><span>🕘 21:00</span></label>
           <label class="choice"><input type="radio" name="Preferred time" value="22:00" /><span>🕙 22:00</span></label>
+          <label class="choice"><input type="radio" name="Preferred time" value="Other time" id="otherTimeRadio" /><span>🕐 Choose another time</span></label>
+        </div>
+        <div class="custom-box">
+          <label class="small" for="customTime">Your preferred time</label>
+          <input class="custom-input" type="time" name="Custom time" id="customTime" />
         </div>
       </fieldset>
 
@@ -310,6 +378,14 @@
             <input type="radio" name="Activity" value="Museum and Dinner" />
             <span>🏛️ Museum &amp; Dinner</span>
           </label>
+          <label class="choice">
+            <input type="radio" name="Activity" value="Other activity" id="otherActivityRadio" />
+            <span>✍️ Something else</span>
+          </label>
+        </div>
+        <div class="custom-box">
+          <label class="small" for="customActivity">Write your idea</label>
+          <input class="custom-input" type="text" name="Custom activity" id="customActivity" placeholder="For example: picnic, art class..." />
         </div>
       </fieldset>
 
@@ -324,8 +400,8 @@
             <span>🍲 Korean</span>
           </label>
           <label class="choice">
-            <input type="radio" name="Food" value="Japanese" />
-            <span>🍱 Japanese</span>
+            <input type="radio" name="Food" value="Japanese / Sushi" />
+            <span>🍣 Japanese / Sushi</span>
           </label>
           <label class="choice">
             <input type="radio" name="Food" value="Italian" />
@@ -340,10 +416,6 @@
             <span>🥣 Soup</span>
           </label>
           <label class="choice">
-            <input type="radio" name="Food" value="Sushi" />
-            <span>🍣 Sushi</span>
-          </label>
-          <label class="choice">
             <input type="radio" name="Food" value="Dessert and Coffee" />
             <span>🍰 Dessert &amp; Coffee</span>
           </label>
@@ -351,6 +423,14 @@
             <input type="radio" name="Food" value="Anything" />
             <span>✨ Anything</span>
           </label>
+          <label class="choice">
+            <input type="radio" name="Food" value="Other food" id="otherFoodRadio" />
+            <span>✍️ Something else</span>
+          </label>
+        </div>
+        <div class="custom-box">
+          <label class="small" for="customFood">Write what you would like to eat</label>
+          <input class="custom-input" type="text" name="Custom food" id="customFood" placeholder="For example: Mongolian, Chinese..." />
         </div>
       </fieldset>
 
@@ -361,8 +441,19 @@
     <div class="footer">Made for one lovely date.</div>
   </main>
 
+  <div class="success-screen" id="successScreen" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+    <div class="success-card">
+      <div class="success-icon">💌</div>
+      <h2 id="successTitle">Your choices were sent!</h2>
+      <p>Thank you ❤️ Your date preferences have been delivered successfully.</p>
+      <button type="button" id="closeSuccess">Done</button>
+    </div>
+  </div>
+
   <script>
     const form=document.getElementById("dateForm"),result=document.getElementById("result"),submitBtn=document.getElementById("submitBtn");
+    const successScreen=document.getElementById("successScreen"),closeSuccess=document.getElementById("closeSuccess");
+    closeSuccess.addEventListener("click",()=>successScreen.classList.remove("show"));
     const calendarTitle=document.getElementById("calendarTitle"),calendarDays=document.getElementById("calendarDays"),prevMonthBtn=document.getElementById("prevMonth"),nextMonthBtn=document.getElementById("nextMonth"),selectedDateText=document.getElementById("selectedDateText"),preferredDateInput=document.getElementById("preferredDate");
     const minDate=new Date(2026,7,1),maxDate=new Date(2027,11,31); let currentMonth=new Date(2026,7,1),selectedDate=null;
     const sameDay=(a,b)=>a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
@@ -376,7 +467,14 @@
     }
     prevMonthBtn.onclick=()=>{if(!prevMonthBtn.disabled){currentMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth()-1,1);renderCalendar()}};
     nextMonthBtn.onclick=()=>{if(!nextMonthBtn.disabled){currentMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth()+1,1);renderCalendar()}};renderCalendar();
-    form.addEventListener("submit",async e=>{e.preventDefault();const validCodes=["Luna11","Drow22","Mage33","Mirana44"];const code=document.getElementById("inviteCode").value.trim();if(!validCodes.includes(code)){result.className="error";result.style.display="block";result.textContent="Invalid invite code.";return}if(!selectedDate){result.className="error";result.textContent="Please select a date.";return}const key=form.querySelector('input[name="access_key"]').value;if(!key||key==="YOUR_ACCESS_KEY_HERE"){result.className="error";result.textContent="Web3Forms access key has not been added yet.";return}submitBtn.disabled=true;submitBtn.textContent="Sending...";result.className="";result.style.display="none";try{const fd=new FormData(form),r=await fetch("https://api.web3forms.com/submit",{method:"POST",body:fd}),data=await r.json();if(!data.success)throw new Error(data.message||"Submission failed");form.reset();selectedDate=null;preferredDateInput.value="";selectedDateText.textContent="Select a date ❤️";currentMonth=new Date(2026,7,1);renderCalendar();result.className="success";result.textContent="Your choices were sent successfully ❤️"}catch(err){result.className="error";result.textContent="Something went wrong. Please try again."}finally{submitBtn.disabled=false;submitBtn.textContent="❤️ Send My Choices"}});
+
+    const customTime=document.getElementById("customTime"),customActivity=document.getElementById("customActivity"),customFood=document.getElementById("customFood");
+    const otherTimeRadio=document.getElementById("otherTimeRadio"),otherActivityRadio=document.getElementById("otherActivityRadio"),otherFoodRadio=document.getElementById("otherFoodRadio");
+    customTime.addEventListener("input",()=>{if(customTime.value)otherTimeRadio.checked=true});
+    customActivity.addEventListener("input",()=>{if(customActivity.value.trim())otherActivityRadio.checked=true});
+    customFood.addEventListener("input",()=>{if(customFood.value.trim())otherFoodRadio.checked=true});
+
+    form.addEventListener("submit",async e=>{e.preventDefault();const validCodes=["Luna11","Drow22","Mage33","Mirana44"];const code=document.getElementById("inviteCode").value.trim();if(!validCodes.includes(code)){result.className="error";result.style.display="block";result.textContent="Invalid invite code.";return}if(otherTimeRadio.checked&&!customTime.value){result.className="error";result.style.display="block";result.textContent="Please choose your preferred time.";return}if(otherActivityRadio.checked&&!customActivity.value.trim()){result.className="error";result.style.display="block";result.textContent="Please write your activity idea.";return}if(otherFoodRadio.checked&&!customFood.value.trim()){result.className="error";result.style.display="block";result.textContent="Please write what you would like to eat.";return}if(!selectedDate){result.className="error";result.textContent="Please select a date.";return}const key=form.querySelector('input[name="access_key"]').value;if(!key||key==="YOUR_ACCESS_KEY_HERE"){result.className="error";result.textContent="Web3Forms access key has not been added yet.";return}submitBtn.disabled=true;submitBtn.textContent="Sending...";result.className="";result.style.display="none";try{const fd=new FormData(form),r=await fetch("https://api.web3forms.com/submit",{method:"POST",body:fd}),data=await r.json();if(!data.success)throw new Error(data.message||"Submission failed");form.reset();selectedDate=null;preferredDateInput.value="";selectedDateText.textContent="Select a date ❤️";currentMonth=new Date(2026,7,1);renderCalendar();result.className="success";result.textContent="Your choices were sent successfully ❤️";successScreen.classList.add("show")}catch(err){result.className="error";result.textContent="Something went wrong. Please try again."}finally{submitBtn.disabled=false;submitBtn.textContent="❤️ Send My Choices"}});
   </script>
 </body>
 </html>
