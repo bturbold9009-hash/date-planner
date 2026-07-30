@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#fff7f8" />
+  <title>Let's Plan Our Date</title>
+  <style>
+    :root {
+      --bg: #fff7f8;
+      --card: rgba(255,255,255,.92);
+      --text: #241b1d;
+      --muted: #77676b;
+      --accent: #e85d75;
+      --accent-dark: #ca405a;
+      --border: #f0dce1;
+      --shadow: 0 18px 50px rgba(107, 45, 59, .12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, #ffe4e9 0, transparent 34%),
+        radial-gradient(circle at bottom right, #f5dce4 0, transparent 30%),
+        var(--bg);
+      padding: 24px 16px;
+    }
+
+    .wrap {
+      width: min(100%, 620px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 24px 10px 18px;
+    }
+
+    .heart {
+      display: inline-grid;
+      place-items: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      background: white;
+      box-shadow: var(--shadow);
+      font-size: 28px;
+      transform: rotate(-4deg);
+    }
+
+    h1 {
+      margin: 18px 0 8px;
+      font-size: clamp(30px, 8vw, 46px);
+      line-height: 1.05;
+      letter-spacing: -1.4px;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    form {
+      background: var(--card);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    fieldset {
+      border: 0;
+      padding: 0;
+      margin: 0 0 28px;
+    }
+
+    fieldset:last-of-type { margin-bottom: 22px; }
+
+    legend {
+      width: 100%;
+      font-size: 20px;
+      font-weight: 750;
+      margin-bottom: 14px;
+    }
+
+    .step {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .choice {
+      position: relative;
+      display: block;
+    }
+
+    .choice input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .choice span {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-height: 54px;
+      padding: 13px 15px;
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      background: #fff;
+      cursor: pointer;
+      transition: .18s ease;
+      font-weight: 620;
+    }
+
+    .choice span:hover {
+      transform: translateY(-1px);
+      border-color: #eab7c2;
+    }
+
+    .choice input:checked + span {
+      border-color: var(--accent);
+      background: #fff0f3;
+      box-shadow: 0 0 0 3px rgba(232,93,117,.10);
+    }
+
+    .date-box {
+      margin-top: 10px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1.5px dashed #e8b8c2;
+      background: #fffafb;
+    }
+
+    label.small {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    input[type="date"] {
+      width: 100%;
+      min-height: 50px;
+      border: 1.5px solid var(--border);
+      border-radius: 13px;
+      padding: 10px 12px;
+      font: inherit;
+      color: var(--text);
+      background: white;
+    }
+
+    button {
+      width: 100%;
+      min-height: 56px;
+      border: 0;
+      border-radius: 17px;
+      background: linear-gradient(135deg, var(--accent), #f07f91);
+      color: white;
+      font: inherit;
+      font-weight: 800;
+      font-size: 17px;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(232,93,117,.25);
+      transition: .18s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: .65; cursor: wait; transform: none; }
+
+    #result {
+      display: none;
+      margin-top: 15px;
+      padding: 14px;
+      border-radius: 14px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    #result.success { display: block; background: #edf9f1; color: #24633a; }
+    #result.error { display: block; background: #fff0f0; color: #8f2e39; }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 18px 0 4px;
+    }
+
+
+    .calendar{border:1.5px solid var(--border);background:#fff;border-radius:20px;padding:16px}
+    .calendar-header{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:8px;margin-bottom:14px}
+    .calendar-title{text-align:center;font-weight:800;font-size:18px}
+    .cal-btn{border:0;background:#fff0f3;color:var(--accent);border-radius:12px;width:44px;height:44px;font-size:22px;font-weight:800;cursor:pointer}
+    .cal-btn:disabled{opacity:.35;cursor:not-allowed}
+    .weekdays,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
+    .weekdays div{text-align:center;font-size:12px;font-weight:800;color:var(--muted);padding:5px 0}
+    .day{aspect-ratio:1;border:0;background:transparent;border-radius:12px;font:inherit;font-weight:700;cursor:pointer;color:var(--text)}
+    .day:hover:not(:disabled){background:#fff0f3}.day.selected{background:var(--accent);color:#fff;box-shadow:0 8px 16px rgba(232,93,117,.22)}
+    .day:disabled{color:#cdbfc2;cursor:not-allowed}.day.empty{visibility:hidden}
+    .selected-date{margin-top:14px;padding:12px 14px;border-radius:14px;background:#fff0f3;color:#8a3347;font-weight:750;text-align:center}
+
+    @media (min-width: 560px) {
+      body { padding-top: 40px; }
+      form { padding: 30px; }
+      .two-col { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <div class="heart">❤️</div>
+      <h1>Let's Plan Our Date</h1>
+      <p class="subtitle">Choose the options you like best.</p>
+    </header>
+
+    <form id="dateForm">
+      <!-- Replace YOUR_ACCESS_KEY_HERE with your Web3Forms access key -->
+      <input type="hidden" name="access_key" value="ccd6f8dc-a961-4061-84cf-01a86460686a" />
+      <input type="hidden" name="subject" value="New date choices ❤️" />
+      <input type="hidden" name="from_name" value="Date Planner" />
+      <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
+
+      <fieldset>
+        <legend>
+          <span class="step">Question 1</span>
+          When should we go on our date?
+        </legend>
+        <input type="hidden" name="Preferred date" id="preferredDate" />
+        <div class="calendar">
+          <div class="calendar-header">
+            <button type="button" class="cal-btn" id="prevMonth" aria-label="Previous month">‹</button>
+            <div class="calendar-title" id="calendarTitle"></div>
+            <button type="button" class="cal-btn" id="nextMonth" aria-label="Next month">›</button>
+          </div>
+          <div class="weekdays"><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div><div>Su</div></div>
+          <div class="days" id="calendarDays"></div>
+          <div class="selected-date" id="selectedDateText">Select a date ❤️</div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>
+          <span class="step">Question 2</span>
+          What time works best?
+        </legend>
+        <div class="options two-col">
+          <label class="choice"><input type="radio" name="Preferred time" value="18:00" required /><span>🕕 18:00</span></label>
+          <label class="choice"><input type="radio" name="Preferred time" value="19:00" /><span>🕖 19:00</span></label>
+          <label class="choice"><input type="radio" name="Preferred time" value="20:00" /><span>🕗 20:00</span></label>
+          <label class="choice"><input type="radio" name="Preferred time" value="21:00" /><span>🕘 21:00</span></label>
+          <label class="choice"><input type="radio" name="Preferred time" value="22:00" /><span>🕙 22:00</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>
+          <span class="step">Question 3</span>
+          What would you like to do?
+        </legend>
+        <div class="options">
+          <label class="choice">
+            <input type="radio" name="Activity" value="Dinner" required />
+            <span>🍽️ Dinner</span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="Activity" value="Movie and Dinner" />
+            <span>🎬 Movie &amp; Dinner</span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="Activity" value="Hiking" />
+            <span>🥾 Hiking</span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="Activity" value="Bowling and Dinner" />
+            <span>🎳 Bowling &amp; Dinner</span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="Activity" value="Museum and Dinner" />
+            <span>🏛️ Museum &amp; Dinner</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>
+          <span class="step">Question 4</span>
+          What would you like to eat?
+        </legend>
+        <div class="options two-col">
+          <label class="choice">
+            <input type="radio" name="Food" value="Korean" required />
+            <span>🍲 Korean</span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="Food" value="Japanese" />
+            <span>🍱 Japanese</span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="Food" value="Italian" />
+            <span>🍝 Italian</span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="Food" value="Steak" />
+            <span>🥩 Steak</span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="Food" value="Soup" />
+            <span>🥣 Soup</span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="Food" value="Sushi" />
+            <span>🍣 Sushi</span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="Food" value="Dessert and Coffee" />
+            <span>🍰 Dessert &amp; Coffee</span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="Food" value="Anything" />
+            <span>✨ Anything</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <button type="submit" id="submitBtn">❤️ Send My Choices</button>
+      <div id="result" role="status" aria-live="polite"></div>
+    </form>
+
+    <div class="footer">Made for one lovely date.</div>
+  </main>
+
+  <script>
+    const form=document.getElementById("dateForm"),result=document.getElementById("result"),submitBtn=document.getElementById("submitBtn");
+    const calendarTitle=document.getElementById("calendarTitle"),calendarDays=document.getElementById("calendarDays"),prevMonthBtn=document.getElementById("prevMonth"),nextMonthBtn=document.getElementById("nextMonth"),selectedDateText=document.getElementById("selectedDateText"),preferredDateInput=document.getElementById("preferredDate");
+    const minDate=new Date(2026,7,1),maxDate=new Date(2027,11,31); let currentMonth=new Date(2026,7,1),selectedDate=null;
+    const sameDay=(a,b)=>a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
+    const formatDate=d=>new Intl.DateTimeFormat("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(d);
+    function renderCalendar(){
+      calendarDays.innerHTML=""; calendarTitle.textContent=new Intl.DateTimeFormat("en-US",{month:"long",year:"numeric"}).format(currentMonth);
+      const y=currentMonth.getFullYear(),m=currentMonth.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),offset=(first.getDay()+6)%7;
+      for(let i=0;i<offset;i++){const e=document.createElement("button");e.type="button";e.className="day empty";e.tabIndex=-1;calendarDays.appendChild(e)}
+      for(let d=1;d<=last.getDate();d++){const date=new Date(y,m,d),b=document.createElement("button");b.type="button";b.className="day";b.textContent=d;if(date<minDate||date>maxDate)b.disabled=true;if(sameDay(date,selectedDate))b.classList.add("selected");b.onclick=()=>{selectedDate=date;preferredDateInput.value=formatDate(date);selectedDateText.textContent=`Selected: ${formatDate(date)} ❤️`;renderCalendar()};calendarDays.appendChild(b)}
+      prevMonthBtn.disabled=y===minDate.getFullYear()&&m===minDate.getMonth();nextMonthBtn.disabled=y===maxDate.getFullYear()&&m===maxDate.getMonth();
+    }
+    prevMonthBtn.onclick=()=>{if(!prevMonthBtn.disabled){currentMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth()-1,1);renderCalendar()}};
+    nextMonthBtn.onclick=()=>{if(!nextMonthBtn.disabled){currentMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth()+1,1);renderCalendar()}};renderCalendar();
+    form.addEventListener("submit",async e=>{e.preventDefault();if(!selectedDate){result.className="error";result.textContent="Please select a date.";return}const key=form.querySelector('input[name="access_key"]').value;if(!key||key==="YOUR_ACCESS_KEY_HERE"){result.className="error";result.textContent="Web3Forms access key has not been added yet.";return}submitBtn.disabled=true;submitBtn.textContent="Sending...";result.className="";result.style.display="none";try{const fd=new FormData(form),r=await fetch("https://api.web3forms.com/submit",{method:"POST",body:fd}),data=await r.json();if(!data.success)throw new Error(data.message||"Submission failed");form.reset();selectedDate=null;preferredDateInput.value="";selectedDateText.textContent="Select a date ❤️";currentMonth=new Date(2026,7,1);renderCalendar();result.className="success";result.textContent="Your choices were sent successfully ❤️"}catch(err){result.className="error";result.textContent="Something went wrong. Please try again."}finally{submitBtn.disabled=false;submitBtn.textContent="❤️ Send My Choices"}});
+  </script>
+</body>
+</html>
